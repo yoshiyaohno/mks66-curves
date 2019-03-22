@@ -1,0 +1,21 @@
+line
+10 10 0 10 490 0
+line
+10 10 0 490 10 0
+line
+490 490 0 490 10 0
+line
+490 490 0 10 490 0
+display
+display
+hermite
+200 300 100 100 0 0 0 0
+hermite
+200 300 0 0 0 0 0 0
+hermite
+200 300 0 100 0 0 0 0
+hermite
+200 300 100 0 0 0 0 0
+display
+save
+jef.ppm

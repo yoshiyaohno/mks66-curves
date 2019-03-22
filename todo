@@ -1,0 +1,7 @@
+STUFF TO ADD/FIX/WHATERV
+    using tempfiles without white bars at hte bottom
+    converting image files correctly
+
+NEATING CODE??
+    make edge list an actually [Line Double] rather than vects
+    DrawMats as an actual newtype to make the modify stuff nicer
