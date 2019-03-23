@@ -6,16 +6,19 @@ import qualified Data.Set        as S
 import qualified Data.List       as L
 import qualified Data.Map.Strict as M
 
+import Data.Semigroup as Sem
+
 newtype Transform a = Transform { getVV :: Vect (Vect a) }
 
 instance (Show a) => Show (Transform a) where
     show = unlines . map (unwords . map show . toList) . toList . getVV
 
-instance (Num t) => Semigroup (Transform t) where
+instance (Num t) => Sem.Semigroup (Transform t) where
     (<>) = comp
 
 instance (Num t) => Monoid (Transform t) where
     mempty  = ident
+    mappend = comp
 
 rotX :: (Floating a) => a -> Transform a
 rotX t = Transform $
