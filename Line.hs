@@ -57,7 +57,7 @@ addLine (Line p0 p1) = ([p0, p1] ++)
 
 connectPts :: [Vect a] -> [Vect a]
 connectPts [] = []
-connectPts [x] = [x]
+connectPts [x] = []
 connectPts (a:b:xs) = a:b:(connectPts $ b:xs)
 
 toList :: Vect a -> [a]

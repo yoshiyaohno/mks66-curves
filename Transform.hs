@@ -64,14 +64,23 @@ trans x y z = Transform $
 
 hermite :: (Num a) => Transform a
 hermite = Transform $
-    Vect (Vect 2 (-1) 1 1)
+    Vect (Vect 2 (-2) 1 1)
          (Vect (-3) 3 (-2) (-1))
          (Vect 0 0 1 0)
          (Vect 1 0 0 0)
 
+bezier :: (Num a) => Transform a
+bezier = Transform $
+    Vect (Vect (-1)   3  (-3) 1)
+         (Vect   3  (-6)   3  0)
+         (Vect (-3)   3    0  0)
+         (Vect   1    0    0  0)
 
-sampleParam :: (Enum a, Fractional a) => a -> (a -> a) -> [a]
-sampleParam tMax f = map f [0, (1 / tMax) .. 1]
+circle :: (Floating a, Enum a) => a -> a -> a -> a -> [Vect a]
+circle cx cy cz r =
+    L.zipWith4 Vect xs ys (repeat cz) (repeat 1)
+        where xs = sampleParam 128 (\t -> r * cos (t * 2 * pi) + cx)
+              ys = sampleParam 128 (\t -> r * sin (t * 2 * pi) + cy)
 
 genHermFxns :: (Fractional a, Read a) =>
     [String] -> ((a -> a), (a -> a))
@@ -81,8 +90,19 @@ genHermFxns args =
         hermY = pmult hermite (Vect y0 y1 dy0 dy1)
             in ((dot hermX . cubify), (dot hermY . cubify))
 
+genBezFxns :: (Fractional a, Read a) =>
+    [String] -> ((a -> a), (a -> a))
+genBezFxns args =
+    let [x0, y0, x1, y1, x2, y2, x3, y3] = map read args
+        bezX = pmult bezier (Vect x0 x1 x2 x3)
+        bezY = pmult bezier (Vect y0 y1 y2 y3)
+            in ((dot bezX . cubify), (dot bezY . cubify))
+
 cubify :: (Num a) => a -> Vect a
 cubify x = Vect (x*x*x) (x*x) x 1
+
+sampleParam :: (Enum a, Fractional a) => a -> (a -> b) -> [b]
+sampleParam tMax f = map f [0, (1 / tMax) .. 1]
 
 -- I give up
 transpose :: Transform a -> Transform a

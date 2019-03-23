@@ -27,6 +27,8 @@ wArgs = [ ("save", save)
         , ("move", move)
         , ("rotate", rote)
         , ("hermite", hermite)
+        , ("bezier", bezier)
+        , ("circle", circle)
         ]
 
 main = do
@@ -47,11 +49,24 @@ parse (a:b:xs) =
         Nothing -> 
             case lookup a wArgs of
                 Just c1 -> (c1 $ words b) : (parse xs)
-                Nothing -> parse xs
+                Nothing -> parse (b:xs)
+
+circle :: (MonadState DrawMats m) => Args -> m ()
+circle args =
+    modify $ \(s, t, e) -> (s, t, e ++ pts)
+        where [cx, cy, cz, r] = map read args
+              pts = connectPts $ T.circle cx cy cz r
 
 hermite :: (MonadState DrawMats m) => Args -> m ()
 hermite args = do
     let (fX, fY) = T.genHermFxns args
+        pts = L.zipWith4 Vect (T.sampleParam 128 fX) (T.sampleParam 128 fY)
+                       (repeat 0) (repeat 1)
+    modify $ \(s, t, e) -> (s, t,  e ++ (connectPts pts)) 
+
+bezier :: (MonadState DrawMats m) => Args -> m ()
+bezier args = do
+    let (fX, fY) = T.genBezFxns args
         pts = L.zipWith4 Vect (T.sampleParam 128 fX) (T.sampleParam 128 fY)
                        (repeat 0) (repeat 1)
     modify $ \(s, t, e) -> (s, t,  e ++ (connectPts pts)) 
