@@ -76,7 +76,10 @@ save args = do
     let path = head args
     modify $ \(s, t, e) -> (T.drawEdges red e M.empty, t, e)
     (scrn, _, _) <- get
-    liftIO $ writeFile path (printPixels (500, 500) scrn)
+    liftIO $ do
+        writeFile ".tempimg.ppm" (printPixels (500, 500) scrn)
+        callProcess "convert" [".tempimg.ppm", path]
+        removeFile ".tempimg.ppm"
 
 display :: (MonadState DrawMats m, MonadIO m) => m ()
 display = do
